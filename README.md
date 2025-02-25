@@ -29,77 +29,42 @@ This web application is built with Laravel for the backend and React for the fro
 
 ## 🛠️ Installation
 
-To run without docker : 
+### Backend Setup
+```bash
+# Install dependencies
+cd backend
+composer install
 
-    backend : 
+# Run database migrations
+php artisan migrate
 
-run `composer install` in the backend directory
+# Start the development server
+php artisan serve
 
-run `php artisan migrate` in the backend directory
+# (Optional) Seed the database with sample data
+php artisan db:seed
+```
 
-run `php artisan serve` in the backend directory
+### Frontend Setup
+```bash
+# Install dependencies
+cd frontend
+npm install
 
-run `php artisan db:seed` in the backend directory if you want to have some data in the database
+# Start the development server
+npm run dev
+```
 
-frontend : 
+### Run with Docker
 
-run `npm install` in the frontend directory
+```bash
+# Run in both the backend and frontend services
+docker compose up --build -d
 
-run `npm run dev` in the frontend directory
+# Run database migrations
+php artisan migrate
 
-
-## 📦 Project Structure
-
-### Backend
-
-backend/
-├── app/
-│ ├── Console/
-│ ├── Exceptions/
-│ ├── Http/
-│ ├── Models/
-│ ├── Providers/
-│ ├── Resources/
-│ ├── Services/
-├── bootstrap/
-├── config/
-├── database/
-├── public/
-├── resources/
-├── routes/
-├── storage/
-├── tests/
-├── vendor/
-├── .env
-├── docker-compose.yml
-└── Dockerfile
-
-
-### Frontend
-
-frontend/
-├── public/
-├── src/
-│ ├── assets/
-│ ├── components/
-│ ├── services/
-│ ├── styles/
-│ ├── types/
-│ ├── utils/
-│ ├── views/
-│ ├── App.tsx
-│ ├── main.tsx
-│ ├── router.ts
-│ ├── vite-env.d.ts
-│ └── index.html
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-├── docker-compose.yml
-└── Dockerfile
-
-
-
-
-
+# (Optional) Seed the database with sample data
+php artisan db:seed
+```
 
