@@ -1,0 +1,41 @@
+services:
+  backend:
+    container_name: ${COMPOSE_PROJECT_NAME}-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+    networks:
+      app_network:
+        aliases:
+          - backend
+    depends_on:
+      - db
+
+  db:
+    container_name: ${COMPOSE_PROJECT_NAME}-mysql
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    name: assignment01_app_network
+    external: true
+
+volumes:
+  mysql_data:
+    driver: local

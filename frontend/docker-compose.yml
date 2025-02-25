@@ -1,0 +1,20 @@
+services:
+  frontend:
+    container_name: ${COMPOSE_PROJECT_NAME}-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - VITE_BACKEND_URL=${VITE_BACKEND_URL}
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    name: assignment01_app_network
+    external: true 
