@@ -25,6 +25,8 @@ const buttonStyles = cva({
         "bg-red-700 text-white hover:bg-red-800 focus-visible:ring-red-300",
       outline:
         "border border-gray-900 text-dark-900 bg-white hover:bg-gray-900 hover:text-white",
+        ghost:
+        "bg-transparent text-dark-900 hover:bg-gray-900 hover:text-white",
     },
     size: {
       default: "h-10 px-4 py-2",

@@ -64,7 +64,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
         <div className="flex justify-between items-center border-b p-4">
           <h3 className="text-xl font-semibold text-gray-800">{title}</h3>
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={onClose}
             aria-label="Close"
             className="rounded-full"
