@@ -1,12 +1,11 @@
+import BooksPage from "./views/book/BooksPage";
 
 function App() {
-  console.log(import.meta.env.VITE_BACKEND_URL);
-
   return (
-    <>
-      <h1 className='text-blue-500 text-4xl'>Hello World</h1>  
-    </>
-  )
+    <div className="w-full min-h-screen bg-gray-50">
+      <BooksPage />
+    </div>
+  );
 }
 
-export default App
+export default App;
