@@ -12,10 +12,12 @@ import { useDebounce } from "../../../hooks/useDebounce";
 import BookDeleteModal from "./BookDeleteModal";
 import { useDeleteBook } from "../hooks/useDeleteBook";
 import toast from "react-hot-toast";
+import { FetchBooksParams } from "../../../types/book";
+import BookFormModal from "./BookFormModal";
 
 enum ModalType {
   NONE = "NONE",
-  EDIT_BOOK = "EDIT_BOOK",
+  BOOK_FORM = "BOOK_FORM",
   DELETE_CONFIRM = "DELETE_CONFIRM",
 }
 
@@ -43,10 +45,13 @@ const BooksTable = () => {
   }, [pagination, sorting, debouncedSearchTerm]);
 
   const columns = useBookColumns({
-    onEditClick: () => {},
+    onEditClick: (bookId: number) => {
+      setSelectedBookId(bookId);
+      setActiveModal(ModalType.BOOK_FORM);
+    },
     onDeleteClick: (bookId: number) => {
-        setSelectedBookId(bookId);
-        setActiveModal(ModalType.DELETE_CONFIRM);
+      setSelectedBookId(bookId);
+      setActiveModal(ModalType.DELETE_CONFIRM);
     },
   });
 
@@ -66,7 +71,11 @@ const BooksTable = () => {
 
   const headerActions = (
     <>
-      <Button variant="default" className="flex items-center gap-1">
+      <Button
+        variant="default"
+        className="flex items-center gap-1"
+        onClick={() => setActiveModal(ModalType.BOOK_FORM)}
+      >
         <FaPlus size={14} />
         Add Book
       </Button>
@@ -77,11 +86,25 @@ const BooksTable = () => {
     </>
   );
 
+  const getCurrentQueryParams = (): FetchBooksParams => {
+    return {
+      page: pagination.pageIndex + 1,
+      perPage: pagination.pageSize,
+      search: debouncedSearchTerm,
+      sortBy: sorting.length > 0 ? sorting[0].id : undefined,
+      sortDirection:
+        sorting.length > 0 ? (sorting[0].desc ? 'desc' : 'asc') : undefined,
+    };
+  };
+
   /** ---------------------------- Modals logic ---------------------------- */
 
-  const [selectedBookId, setSelectedBookId] = useState<number | null>(null);
+  const [selectedBookId, setSelectedBookId] = useState<number | undefined>(
+    undefined
+  );
 
   const { deleteBook, error: deleteError } = useDeleteBook();
+
   const handleConfirmDelete = async () => {
     if (!selectedBookId) return;
 
@@ -94,13 +117,26 @@ const BooksTable = () => {
     }
 
     setActiveModal(ModalType.NONE);
-    setSelectedBookId(null);
-    fetchBooks();
+    setSelectedBookId(undefined);
+    fetchBooks(getCurrentQueryParams());
+  };
+
+  const handleFormSuccess = () => {
+    toast.success(
+      selectedBookId ? "Book updated successfully" : "Book created successfully"
+    );
+    setActiveModal(ModalType.NONE);
+    setSelectedBookId(undefined);
+    fetchBooks(getCurrentQueryParams());
+  };
+
+  const handleFormError = (error: string) => {
+    toast.error(error);
   };
 
   const handleModalClose = () => {
     setActiveModal(ModalType.NONE);
-    setSelectedBookId(null);
+    setSelectedBookId(undefined);
   };
 
   return (
@@ -126,6 +162,14 @@ const BooksTable = () => {
         isOpen={activeModal === ModalType.DELETE_CONFIRM}
         onClose={handleModalClose}
         onConfirm={handleConfirmDelete}
+      />
+
+      <BookFormModal
+        isOpen={activeModal === ModalType.BOOK_FORM}
+        onClose={handleModalClose}
+        bookId={selectedBookId}
+        onSuccess={handleFormSuccess}
+        onError={handleFormError}
       />
     </div>
   );
