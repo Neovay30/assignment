@@ -1,10 +1,10 @@
-import { createColumnHelper } from '@tanstack/react-table';
-import { FaEdit, FaTrash } from 'react-icons/fa';
-import { Book } from '../../../types/book';
+import { createColumnHelper } from "@tanstack/react-table";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import { Book } from "../../../types/book";
 
 interface BookColumnsProps {
-  onEditClick?: (book: Book) => void;
-  onDeleteClick: (id: number) => void;
+  onEditClick?: (bookId: number) => void;
+  onDeleteClick: (bookId: number) => void;
 }
 
 export const useBookColumns = ({
@@ -16,23 +16,23 @@ export const useBookColumns = ({
   return [
     columnHelper.accessor('title', {
       header: () => <span>Title</span>,
-      cell: info => <span className="font-medium">{info.getValue()}</span>,
+      cell: (info) => <span className="font-medium">{info.getValue()}</span>,
       enableSorting: true,
       size: 300,
     }),
     columnHelper.accessor('author', {
       header: () => <span>Author</span>,
-      cell: info => <span>{info.getValue()}</span>,
+      cell: (info) => <span>{info.getValue()}</span>,
       enableSorting: true,
       size: 200,
     }),
     columnHelper.display({
-      id: 'actions',
+      id: "actions",
       header: () => <span>Actions</span>,
       cell: ({ row }) => (
         <div className="flex space-x-2">
           <button
-            onClick={() => onEditClick?.(row.original)}
+            onClick={() => onEditClick?.(row.original.id)}
             className="text-blue-500 hover:text-blue-700"
             aria-label="Edit"
           >
@@ -50,4 +50,4 @@ export const useBookColumns = ({
       size: 100,
     }),
   ];
-}; 
+};
