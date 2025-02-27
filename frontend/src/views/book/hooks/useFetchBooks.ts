@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { bookService } from '../../../services/api/bookService';
 import { FetchBooksParams, Book } from '../../../types/book';
+import { getErrorMessage } from '../../../utils/errorUtils';
 
 export const useFetchBooks = () => {
     const [books, setBooks] = useState<Book[]>([]);
@@ -20,9 +21,8 @@ export const useFetchBooks = () => {
       setTotalItems(response.meta.total);
       return response;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch books';
+      const errorMessage = getErrorMessage(err, 'Failed to fetch books');
       setError(errorMessage);
-      console.error('Error fetching books:', err);
       return null;
     } finally {
       setLoading(false);

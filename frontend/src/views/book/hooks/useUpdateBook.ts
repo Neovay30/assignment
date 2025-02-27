@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 
 import { bookService } from "../../../services/api/bookService";
 import { BookUpdateInput } from "../../../types/book";
+import { getErrorMessage } from "../../../utils/errorUtils";
 
 export const useUpdateBook = () => {
   const [loading, setLoading] = useState(false);
@@ -15,10 +16,8 @@ export const useUpdateBook = () => {
         const updatedBook = await bookService.update(id, bookData);
         return updatedBook;
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : `Failed to update book ${id}`
-        );
-        console.error(`Error updating book ${id}:`, err);
+        const errorMessage = getErrorMessage(err, `Failed to update book ${id}`);
+        setError(errorMessage);
         return null;
       } finally {
         setLoading(false);
