@@ -6,37 +6,13 @@ import { FormInput } from '../../../components/ui/FormInput';
 import { useFetchBook } from '../hooks/useFetchBook';
 import { useCreateBook } from '../hooks/useCreateBook';
 import { useUpdateBook } from '../hooks/useUpdateBook';
-
+import { titleValidation, authorValidation } from '../constants/validationRules';
 interface BookFormProps {
   bookId?: number;
   onSuccess?: () => void;
   onError?: (error: string) => void;
   onCancel?: () => void;
 }
-
-const titleValidation = {
-  required: 'Title is required',
-  minLength: {
-    value: 2,
-    message: 'Title must be at least 2 characters',
-  },
-  maxLength: {
-    value: 100,
-    message: 'Title cannot exceed 100 characters',
-  },
-};
-
-const authorValidation = {
-  required: 'Author is required',
-  minLength: {
-    value: 2,
-    message: 'Author must be at least 2 characters',
-  },
-  maxLength: {
-    value: 50,
-    message: 'Author name cannot exceed 50 characters',
-  },
-};
 
 const BookForm = ({ bookId, onSuccess, onError, onCancel }: BookFormProps) => {
   const isEditMode = !!bookId;
