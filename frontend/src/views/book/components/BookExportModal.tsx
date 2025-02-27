@@ -5,6 +5,8 @@ import { ExportOptions } from '../../../types/export';
 import { useBookExport } from '../hooks/useBookExport';
 import { CSV_EXAMPLES, XML_EXAMPLES } from '../constants/exportExamples';
 import LoadingSpinner from '../../../components/ui/LoadingSpinner';
+import toast from 'react-hot-toast';
+
 interface BookExportModalProps {
   onClose: () => void;
   totalItems: number;
@@ -15,7 +17,7 @@ const BookExportModal = ({ onClose, totalItems }: BookExportModalProps) => {
   const [includeTitle, setIncludeTitle] = useState(true);
   const [includeAuthor, setIncludeAuthor] = useState(true);
   const [loading, setLoading] = useState(false);
-  const { exportBooks } = useBookExport();
+  const { exportBooks, error: exportError } = useBookExport();
 
   const getExampleKey = () => {
     if (includeTitle && includeAuthor) return 'both';
@@ -31,20 +33,26 @@ const BookExportModal = ({ onClose, totalItems }: BookExportModalProps) => {
 
   const handleExport = async () => {
     setLoading(true);
+    
     const options: ExportOptions = {
-        format,
-        includeTitle,
-        includeAuthor,
-        selectedAll: true,
-        ids: []
-      };
+      format,
+      includeTitle,
+      includeAuthor,
+      selectedAll: true,
+      ids: []
+    };
+    
     try {
       const success = await exportBooks(options);
       if (success) {
+        toast.success('Books exported successfully');
         onClose();
+      } else {
+        toast.error(exportError || 'Export failed. Please try again.');
       }
     } catch (error) {
       console.error('Export failed:', error);
+      toast.error('An unexpected error occurred during export.');
     } finally {
       setLoading(false);
     }

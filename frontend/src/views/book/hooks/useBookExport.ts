@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { bookService } from '../../../services/api/bookService';
 import { ExportOptions } from '../../../types/export';
-
+import { getErrorMessage } from '../../../utils/errorUtils';
 export const useBookExport = () => {
   const [error, setError] = useState<string | null>(null);
 
@@ -28,7 +28,8 @@ export const useBookExport = () => {
       
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to export books');
+      const errorMessage = getErrorMessage(err, 'Failed to export books');
+      setError(errorMessage);
       return false;
     }
   }, [setError]);
