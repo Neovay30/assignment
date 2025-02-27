@@ -1,5 +1,6 @@
 import { bookService } from "../../../services/api/bookService";
 import { useCallback, useState } from "react";
+import { getErrorMessage } from "../../../utils/errorUtils";
 
 export const useFetchBook = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -12,10 +13,8 @@ export const useFetchBook = () => {
       try {
         return await bookService.getById(id);
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : `Failed to fetch book ${id}`
-        );
-        console.error(`Error fetching book ${id}:`, err);
+        const errorMessage = getErrorMessage(err, `Failed to fetch book ${id}`);
+        setError(errorMessage);
         return null;
       } finally {
         setLoading(false);
