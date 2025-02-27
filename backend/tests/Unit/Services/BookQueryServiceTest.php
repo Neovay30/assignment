@@ -46,7 +46,7 @@ class BookQueryServiceTest extends TestCase
 
     public function test_get_all_books_with_custom_page(): void
     {
-        // Create 25 books
+        // Create 25 books, second page must have 10 books
         Book::factory()->count(25)->create();
         $options = new BookQueryOptions(page: 2, perPage: 10);
 
@@ -59,7 +59,7 @@ class BookQueryServiceTest extends TestCase
 
     public function test_get_all_books_with_sort_by_title_asc(): void
     {
-        // Create books with specific titles
+        // Create books in non-alphabetical order, should be sorted by title asc
         Book::factory()->create(['title' => 'Z Book']);
         Book::factory()->create(['title' => 'A Book']);
         Book::factory()->create(['title' => 'M Book']);
@@ -74,7 +74,7 @@ class BookQueryServiceTest extends TestCase
 
     public function test_get_all_books_with_sort_by_title_desc(): void
     {
-        // Create books with specific titles
+        // Create books in non-alphabetical order, should be sorted by title desc
         Book::factory()->create(['title' => 'Z Book']);
         Book::factory()->create(['title' => 'A Book']);
         Book::factory()->create(['title' => 'M Book']);
@@ -89,7 +89,6 @@ class BookQueryServiceTest extends TestCase
 
     public function test_get_all_books_with_sort_by_author(): void
     {
-        // Create books with specific authors
         Book::factory()->create(['title' => 'Book 1', 'author' => 'Z Author']);
         Book::factory()->create(['title' => 'Book 2', 'author' => 'A Author']);
         Book::factory()->create(['title' => 'Book 3', 'author' => 'M Author']);
@@ -104,7 +103,6 @@ class BookQueryServiceTest extends TestCase
 
     public function test_get_all_books_with_combined_options(): void
     {
-        // Create a variety of books
         Book::factory()->create(['title' => 'PHP Book 1', 'author' => 'Author 1']);
         Book::factory()->create(['title' => 'PHP Book 2', 'author' => 'Author 2']);
         Book::factory()->create(['title' => 'Laravel Book', 'author' => 'PHP Author']);
