@@ -16,7 +16,7 @@ export const useFetchBooks = () => {
     
     try {
       const response = await bookService.getAll(params);
-      setBooks(response.data);
+      setBooks(response.books);
       setTotalPages(response.meta.last_page);
       setTotalItems(response.meta.total);
       return response;
