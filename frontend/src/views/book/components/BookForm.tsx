@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import { Book, BookCreateInput, BookUpdateInput } from '../../../types/book';
+import { Book, BookCreateInput, BookUpdateInput, BookFormValues } from '../../../types/book';
 import Button from '../../../components/ui/Button';
-import { FormInput } from '../../../components/ui/FormInput';
+import { InputForm } from '../../../components/ui/InputForm';
 import { useFetchBook } from '../hooks/useFetchBook';
 import { useCreateBook } from '../hooks/useCreateBook';
 import { useUpdateBook } from '../hooks/useUpdateBook';
 import { titleValidation, authorValidation } from '../constants/validationRules';
+import { useFormValidation } from '../../../hooks/useFormValidation';
+
 interface BookFormProps {
   bookId?: number;
   onSuccess?: () => void;
@@ -21,8 +23,9 @@ const BookForm = ({ bookId, onSuccess, onError, onCancel }: BookFormProps) => {
   const { createBook, loading: createLoading } = useCreateBook();
   const { updateBook, loading: updateLoading } = useUpdateBook();
   const isLoading = fetchLoading || createLoading || updateLoading;
+  const { setServerErrors } = useFormValidation();
 
-  const form = useForm<BookCreateInput | BookUpdateInput>({
+  const form = useForm<BookFormValues>({
     defaultValues: {
       title: book?.title || '',
       author: book?.author || '',
@@ -43,17 +46,26 @@ const BookForm = ({ bookId, onSuccess, onError, onCancel }: BookFormProps) => {
     });
   }, [book]);
 
-  const onSubmit = async (data: BookCreateInput | BookUpdateInput) => {
+  const onSubmit = async (data: BookFormValues) => {
     try {
       if (isEditMode) {
-        const result = await updateBook(book!.id, data as BookUpdateInput);
+        const updateData: BookUpdateInput = {
+          author: data.author
+        };
+        const result = await updateBook(book!.id, updateData);
         if (result && onSuccess) {
           onSuccess();
         }
       } else {
-        const result = await createBook(data as BookCreateInput);
-        if (result && onSuccess) {
+        const createData: BookCreateInput = {
+          title: data.title,
+          author: data.author
+        };
+        const result = await createBook(createData);
+        if (result.success && onSuccess) {
           onSuccess();
+        } else if (result.errors) {
+          setServerErrors(result.errors, form.setError);
         }
       }
     } catch (err) {
@@ -62,25 +74,30 @@ const BookForm = ({ bookId, onSuccess, onError, onCancel }: BookFormProps) => {
       }
     }
   };
+
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <FormInput
+          <InputForm
             label="Title"
             disabled={isEditMode}
             placeholder="Enter book title"
             className="mb-2"
-            {...form.register('title', titleValidation)}
+            name="title"
+            error={form.formState.errors.title?.message}
+            validation={titleValidation}
           />
         </div>
         
         <div>
-          <FormInput
+          <InputForm
             label="Author"
             placeholder="Enter author name"
             className="mb-2"
-            {...form.register('author', authorValidation)}
+            name="author"
+            error={form.formState.errors.author?.message}
+            validation={authorValidation}
           />
         </div>
         

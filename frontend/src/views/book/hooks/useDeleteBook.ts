@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { bookService } from "../../../services/api/bookService";
+import { getErrorMessage } from "../../../utils/errorUtils";
 
 export const useDeleteBook = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -12,10 +13,8 @@ export const useDeleteBook = () => {
       await bookService.delete(id);
       return true;
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : `Failed to delete book ${id}`
-      );
-      console.error(`Error deleting book ${id}:`, err);
+      const errorMessage = getErrorMessage(err, `Failed to delete book ${id}`);
+      setError(errorMessage);
       return false;
     } finally {
       setLoading(false);

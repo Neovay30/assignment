@@ -14,3 +14,8 @@ export interface FetchBooksParams {
   sortBy?: string;
   sortDirection?: 'asc' | 'desc';
 }
+
+export interface BookFormValues {
+  title: string;
+  author: string;
+}
