@@ -6,7 +6,7 @@ use App\Models\Book;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class BookQueryFeatureTest extends TestCase
+class BookQueryTest extends TestCase
 {
     use RefreshDatabase;
 
