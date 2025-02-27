@@ -7,6 +7,8 @@ use App\Services\Book\BookQueryServiceInterface;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\BookRepositoryInterface;
 use App\Repositories\BookRepository;
+use App\Services\Book\BookMutationService;
+use App\Services\Book\BookMutationServiceInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Bind services
         $this->app->bind(BookQueryServiceInterface::class, BookQueryService::class);
+        $this->app->bind(BookMutationServiceInterface::class, BookMutationService::class);
     }
 
     /**
