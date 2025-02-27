@@ -34,9 +34,9 @@ class BookQueryServiceTest extends TestCase
 
     public function test_get_all_books_with_search_filter(): void
     {
-        Book::factory()->create(['title' => 'Test Book']);
-        Book::factory()->create(['title' => 'Another Book']);
-        Book::factory()->create(['author' => 'Test Author']);
+        Book::factory()->withTitle('Test Book')->create();
+        Book::factory()->withTitle('Another Book')->create();
+        Book::factory()->withAuthor('Test Author')->create();
         $options = new BookQueryOptions(search: 'Test');
 
         $result = $this->bookQueryService->getAllBooks($options);
@@ -60,9 +60,9 @@ class BookQueryServiceTest extends TestCase
     public function test_get_all_books_with_sort_by_title_asc(): void
     {
         // Create books in non-alphabetical order, should be sorted by title asc
-        Book::factory()->create(['title' => 'Z Book']);
-        Book::factory()->create(['title' => 'A Book']);
-        Book::factory()->create(['title' => 'M Book']);
+        Book::factory()->withTitle('Z Book')->create();
+        Book::factory()->withTitle('A Book')->create();
+        Book::factory()->withTitle('M Book')->create();
         
         $options = new BookQueryOptions(sortBy: 'title', sortDirection: 'asc');
 
@@ -75,9 +75,9 @@ class BookQueryServiceTest extends TestCase
     public function test_get_all_books_with_sort_by_title_desc(): void
     {
         // Create books in non-alphabetical order, should be sorted by title desc
-        Book::factory()->create(['title' => 'Z Book']);
-        Book::factory()->create(['title' => 'A Book']);
-        Book::factory()->create(['title' => 'M Book']);
+        Book::factory()->withTitle('Z Book')->create();
+        Book::factory()->withTitle('A Book')->create();
+        Book::factory()->withTitle('M Book')->create();
         
         $options = new BookQueryOptions(sortBy: 'title', sortDirection: 'desc');
 
@@ -89,9 +89,9 @@ class BookQueryServiceTest extends TestCase
 
     public function test_get_all_books_with_sort_by_author(): void
     {
-        Book::factory()->create(['title' => 'Book 1', 'author' => 'Z Author']);
-        Book::factory()->create(['title' => 'Book 2', 'author' => 'A Author']);
-        Book::factory()->create(['title' => 'Book 3', 'author' => 'M Author']);
+        Book::factory()->withTitle('Book 1')->withAuthor('Z Author')->create();
+        Book::factory()->withTitle('Book 2')->withAuthor('A Author')->create();
+        Book::factory()->withTitle('Book 3')->withAuthor('M Author')->create();
         
         $options = new BookQueryOptions(sortBy: 'author', sortDirection: 'asc');
 
@@ -103,10 +103,10 @@ class BookQueryServiceTest extends TestCase
 
     public function test_get_all_books_with_combined_options(): void
     {
-        Book::factory()->create(['title' => 'PHP Book 1', 'author' => 'Author 1']);
-        Book::factory()->create(['title' => 'PHP Book 2', 'author' => 'Author 2']);
-        Book::factory()->create(['title' => 'Laravel Book', 'author' => 'PHP Author']);
-        Book::factory()->create(['title' => 'JavaScript Book', 'author' => 'JS Author']);
+        Book::factory()->withTitle('PHP Book 1')->withAuthor('Author 1')->create();
+        Book::factory()->withTitle('PHP Book 2')->withAuthor('Author 2')->create();
+        Book::factory()->withTitle('Laravel Book')->withAuthor('PHP Author')->create();
+        Book::factory()->withTitle('JavaScript Book')->withAuthor('JS Author')->create();
         
         $options = new BookQueryOptions(
             search: 'PHP',
@@ -150,10 +150,7 @@ class BookQueryServiceTest extends TestCase
 
     public function test_get_book_by_id_returns_correct_book(): void
     {
-        $book = Book::factory()->create([
-            'title' => 'Test Book',
-            'author' => 'Test Author'
-        ]);
+        $book = Book::factory()->withTitle('Test Book')->withAuthor('Test Author')->create();
         
         $result = $this->bookQueryService->getBookById($book->id);
         

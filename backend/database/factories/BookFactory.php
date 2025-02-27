@@ -31,4 +31,14 @@ class BookFactory extends Factory
             'updated_at' => now(),
         ];
     }
+
+    public function withTitle(string $title): self
+    {
+        return $this->state(fn (array $attributes) => ['title' => $title]);
+    }
+
+    public function withAuthor(string $author): self
+    {
+        return $this->state(fn (array $attributes) => ['author' => $author]);
+    }
 } 

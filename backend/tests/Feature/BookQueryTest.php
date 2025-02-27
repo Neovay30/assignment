@@ -13,32 +13,32 @@ class BookQueryTest extends TestCase
     public function test_can_search_books(): void
     {
         // Create books with specific titles
-        Book::factory()->create(['title' => 'PHP Programming']);
-        Book::factory()->create(['title' => 'Laravel Guide']);
-        Book::factory()->create(['title' => 'JavaScript Basics']);
+        Book::factory()->withTitle('PHP Programming')->create();
+        Book::factory()->withTitle('Laravel Guide')->create();
+        Book::factory()->withTitle('JavaScript Basics')->create();
 
         // Search for PHP
         $response = $this->getJson('/api/book?search=PHP');
 
         $response->assertStatus(200);
         $this->assertEquals(1, $response->json('meta.total'));
-        $this->assertEquals('PHP Programming', $response->json('data.0.title'));
+        $this->assertEquals('PHP Programming', $response->json('books.0.title'));
     }
 
     public function test_can_sort_books(): void
     {
         // Create books in non-alphabetical order
-        Book::factory()->create(['title' => 'Z Book']);
-        Book::factory()->create(['title' => 'A Book']);
-        Book::factory()->create(['title' => 'M Book']);
+        Book::factory()->withTitle('Z Book')->create();
+        Book::factory()->withTitle('A Book')->create();
+        Book::factory()->withTitle('M Book')->create();
 
         // Sort by title ascending
         $response = $this->getJson('/api/book?sort_by=title&sort_direction=asc');
 
         $response->assertStatus(200);
-        $this->assertEquals('A Book', $response->json('data.0.title'));
-        $this->assertEquals('M Book', $response->json('data.1.title'));
-        $this->assertEquals('Z Book', $response->json('data.2.title'));
+        $this->assertEquals('A Book', $response->json('books.0.title'));
+        $this->assertEquals('M Book', $response->json('books.1.title'));
+        $this->assertEquals('Z Book', $response->json('books.2.title'));
     }
 
     public function test_can_paginate_books(): void
@@ -51,7 +51,7 @@ class BookQueryTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertEquals(15, $response->json('meta.total'));
-        $this->assertEquals(5, count($response->json('data')));
+        $this->assertEquals(5, count($response->json('books')));
         $this->assertEquals(1, $response->json('meta.current_page'));
         $this->assertEquals(3, $response->json('meta.last_page'));
     }
