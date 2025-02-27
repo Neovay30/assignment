@@ -2,15 +2,13 @@ import { Modal } from "../../../components/ui/Modal";
 import Button from "../../../components/ui/Button";
 
 interface BookDeleteModalProps {
-    isOpen: boolean;
     onClose: () => void;
     onConfirm: () => void;
 }
 
-const BookDeleteModal = ({ isOpen, onClose, onConfirm }: BookDeleteModalProps) => {
+const BookDeleteModal = ({ onClose, onConfirm }: BookDeleteModalProps) => {
     return (
         <Modal
-            isOpen={isOpen}
             onClose={onClose}
             title="Confirm Delete"
         >

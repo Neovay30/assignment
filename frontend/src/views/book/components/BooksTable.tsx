@@ -1,3 +1,5 @@
+import React, { Suspense } from 'react';
+
 import { Table } from "../../../components/ui/Table";
 import { TableHeader } from "../../../components/ui/Table/TableHeader";
 import { TableFooter } from "../../../components/ui/Table/TableFooter";
@@ -9,16 +11,21 @@ import { useFetchBooks } from "../hooks/useFetchBooks";
 import { useEffect, useState } from "react";
 import { PaginationState, SortingState } from "@tanstack/react-table";
 import { useDebounce } from "../../../hooks/useDebounce";
-import BookDeleteModal from "./BookDeleteModal";
 import { useDeleteBook } from "../hooks/useDeleteBook";
 import toast from "react-hot-toast";
 import { FetchBooksParams } from "../../../types/book";
-import BookFormModal from "./BookFormModal";
+import LoadingSpinner from "../../../components/ui/LoadingSpinner";
+
+// Lazy load to prevent from loading components that are not used
+const BookDeleteModal = React.lazy(() => import('./BookDeleteModal'));
+const BookFormModal = React.lazy(() => import('./BookFormModal'));
+const BookExportModal = React.lazy(() => import('./BookExportModal'));
 
 enum ModalType {
   NONE = "NONE",
   BOOK_FORM = "BOOK_FORM",
   DELETE_CONFIRM = "DELETE_CONFIRM",
+  BOOK_EXPORT = "BOOK_EXPORT",
 }
 
 const BooksTable = () => {
@@ -79,7 +86,11 @@ const BooksTable = () => {
         <FaPlus size={14} />
         Add Book
       </Button>
-      <Button variant="outline" className="flex items-center gap-1">
+      <Button 
+        variant="outline" 
+        className="flex items-center gap-1" 
+        onClick={() => setActiveModal(ModalType.BOOK_EXPORT)}
+      >
         <FaFileExport size={14} />
         Export
       </Button>
@@ -158,19 +169,30 @@ const BooksTable = () => {
 
       <TableFooter table={table} totalItems={totalItems || 0} />
 
-      <BookDeleteModal
-        isOpen={activeModal === ModalType.DELETE_CONFIRM}
-        onClose={handleModalClose}
-        onConfirm={handleConfirmDelete}
-      />
+      <Suspense fallback={<LoadingSpinner message="Loading modal..." />}>
+        {activeModal === ModalType.DELETE_CONFIRM && (
+          <BookDeleteModal
+            onClose={handleModalClose}
+            onConfirm={handleConfirmDelete}
+          />
+        )}
 
-      <BookFormModal
-        isOpen={activeModal === ModalType.BOOK_FORM}
-        onClose={handleModalClose}
-        bookId={selectedBookId}
-        onSuccess={handleFormSuccess}
-        onError={handleFormError}
-      />
+        {activeModal === ModalType.BOOK_FORM && (
+          <BookFormModal
+            onClose={handleModalClose}
+            bookId={selectedBookId}
+            onSuccess={handleFormSuccess}
+            onError={handleFormError}
+          />
+        )}
+
+        {activeModal === ModalType.BOOK_EXPORT && (
+          <BookExportModal
+            onClose={handleModalClose}
+            totalItems={totalItems || 0}
+          />
+        )}
+      </Suspense>
     </div>
   );
 };
