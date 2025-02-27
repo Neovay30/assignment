@@ -54,7 +54,7 @@ const BookExportModal = ({ onClose, totalItems }: BookExportModalProps) => {
     <Modal
       onClose={onClose}
       title="Export Books"
-      size="xxlarge"
+      size="xxl"
     >
       {loading && (
         <LoadingSpinner message="Preparing your download..." />
