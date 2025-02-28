@@ -2,7 +2,7 @@ name: Build and Deploy to GCP
 
 on:
   push:
-    branches: [ ops/cloud-config ]
+    branches: [ main ]
   workflow_dispatch:
 
 env:
