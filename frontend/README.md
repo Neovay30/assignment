@@ -42,3 +42,19 @@ src/
         ├── hooks/      # Book-specific hooks
         └── constants/  # Book-related constants
 ```
+
+## Local Development Setup
+ 
+Docker:
+
+1. Navigate to the frontend directory: `cd frontend`
+2. Copy `.env.example` to `.env`
+3. Run `docker compose up -build -d` 
+
+Without Docker:
+
+1. Navigate to the frontend directory: `cd frontend`
+2. Install dependencies: `npm install`
+3. Copy `.env.example` to `.env`
+4. Configure your backend URL in the `.env` file
+5. Start the development server: `npm run dev`
