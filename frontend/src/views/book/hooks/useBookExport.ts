@@ -17,11 +17,12 @@ export const useBookExport = () => {
         type: options.format === 'csv' ? 'text/csv' : 'application/xml'
       });
       const downloadUrl = window.URL.createObjectURL(data);
+
       
       // Create a temporary anchor element to trigger the download
       const a = document.createElement('a');
       a.href = downloadUrl;
-      a.download = `books-export.${options.format}`;
+      a.download = `books-export.${new Date().toISOString().split('T')[0]}.${options.format}`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

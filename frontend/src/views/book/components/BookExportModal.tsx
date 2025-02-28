@@ -38,8 +38,6 @@ const BookExportModal = ({ onClose, totalItems }: BookExportModalProps) => {
       format,
       includeTitle,
       includeAuthor,
-      selectedAll: true,
-      ids: []
     };
     
     try {
