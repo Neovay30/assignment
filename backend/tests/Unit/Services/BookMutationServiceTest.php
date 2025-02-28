@@ -36,4 +36,34 @@ class BookMutationServiceTest extends TestCase
         $this->assertEquals('Test Author Name', $book->author);
         $this->assertDatabaseHas('books', $bookData);
     }
+
+    public function test_can_update_book_author(): void
+    {
+        $book = Book::factory()->withTitle('Original Title')->withAuthor('Original Author')->create();
+        $updateData = [
+            'author' => 'Updated Author',
+        ];
+
+        $updatedBook = $this->bookMutationService->updateBook($book->id, $updateData);
+
+        $this->assertInstanceOf(Book::class, $updatedBook);
+        $this->assertEquals($book->id, $updatedBook->id);
+        // Title should remain unchanged
+        $this->assertEquals('Original Title', $updatedBook->title); 
+        $this->assertEquals('Updated Author', $updatedBook->author);
+        $this->assertDatabaseHas('books', [
+            'id' => $book->id,
+            'title' => 'Original Title',
+            'author' => 'Updated Author',
+        ]);
+    }
+
+    public function test_update_book_returns_null_for_nonexistent_book(): void
+    {
+        $result = $this->bookMutationService->updateBook(999, [
+            'author' => 'New Author',
+        ]);
+        
+        $this->assertNull($result);
+    }
 }

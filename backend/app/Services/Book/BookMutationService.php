@@ -21,4 +21,18 @@ class BookMutationService implements BookMutationServiceInterface
     {
         return $this->bookRepository->create($data);
     }
+
+    /**
+     * Update an existing book
+     */
+    public function updateBook(int $id, array $data): ?Book
+    {
+        $book = $this->bookRepository->findById($id);
+        
+        if (!$book) {
+            return null;
+        }
+        
+        return $this->bookRepository->update($book, $data);
+    }
 }

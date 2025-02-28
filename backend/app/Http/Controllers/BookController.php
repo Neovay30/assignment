@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DataTransferObjects\Book\BookQueryOptions;
 use App\Http\Requests\BookIndexRequest;
 use App\Http\Requests\BookStoreRequest;
+use App\Http\Requests\BookUpdateRequest;
 use App\Http\Resources\BookCollection;
 use App\Http\Resources\BookResource;
 use App\Services\Book\BookMutationServiceInterface;
@@ -44,7 +45,6 @@ class BookController extends Controller
         return response()->json(new BookResource($book));
     }
 
-
     /**
      * Store a newly created book.
      */
@@ -53,5 +53,20 @@ class BookController extends Controller
         $book = $this->bookMutationService->createBook($request->validated());
         return response()->json(new BookResource($book), Response::HTTP_CREATED);
     }
+
+    /**
+     * Update the specified book.
+     */
+    public function update(BookUpdateRequest $request, int $id): JsonResponse
+    {
+        $book = $this->bookMutationService->updateBook($id, $request->validated());
+        
+        if (!$book) {
+            return response()->json(['message' => 'Book not found'], Response::HTTP_NOT_FOUND);
+        }
+        
+        return response()->json(new BookResource($book));
+    }
+
 
 } 
