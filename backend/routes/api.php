@@ -25,3 +25,4 @@ Route::get('/book/{id}', [BookController::class, 'show']);
 Route::post('/book', [BookController::class, 'store']);
 Route::put('/book/{id}', [BookController::class, 'update']);
 Route::delete('/book/{id}', [BookController::class, 'destroy']);
+Route::post('/book/export', [BookController::class, 'export']);

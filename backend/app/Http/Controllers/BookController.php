@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTransferObjects\Book\BookExportOptions;
 use App\DataTransferObjects\Book\BookQueryOptions;
+use App\Http\Requests\BookExportRequest;
 use App\Http\Requests\BookIndexRequest;
 use App\Http\Requests\BookStoreRequest;
 use App\Http\Requests\BookUpdateRequest;
@@ -10,8 +12,10 @@ use App\Http\Resources\BookCollection;
 use App\Http\Resources\BookResource;
 use App\Services\Book\BookMutationServiceInterface;
 use App\Services\Book\BookQueryServiceInterface;
+use App\Services\Book\BookExportServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class BookController extends Controller
 {
@@ -19,6 +23,7 @@ class BookController extends Controller
     public function __construct(
         protected BookQueryServiceInterface $bookQueryService,
         protected BookMutationServiceInterface $bookMutationService,
+        protected BookExportServiceInterface $bookExportService,
     ) {}
 
     /**
@@ -80,5 +85,20 @@ class BookController extends Controller
         }
         
         return response()->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+
+    /**
+     * NOTE: If there are other types of data to export,
+     * consider separating it in an export dedicated controller 
+     * and add the route to routes/api.php. Do not forget to 
+     * update frontend to use the new route.
+     * 
+     * Export books in CSV or XML format.
+     */
+    public function export(BookExportRequest $request): StreamedResponse
+    {
+        $options = BookExportOptions::fromArray($request->validated());
+        return $this->bookExportService->exportBooks($options);
     }
 } 
