@@ -36,7 +36,6 @@ class BookExportService implements BookExportServiceInterface
      */
     public function exportBooks(BookExportOptions $options): StreamedResponse
     {
-
         $books = $this->bookRepository->getAll();
 
         $fields = [];

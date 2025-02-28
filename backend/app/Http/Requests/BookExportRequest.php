@@ -30,13 +30,14 @@ class BookExportRequest extends FormRequest
 
     /**
      * Get custom validation messages.
+     * 
+     * These errors should never happen in the current frontend implementation as
+     * default values are set and export format is typed to csv or xml only.
      *
      * @return array<string, string>
      */
     public function messages(): array
     {
-        // These errors should never happen in the current frontend implementation as
-        // default values are set and export format is typed to csv or xml only.
         return [
             'format.required' => 'Export format is required.',
             'format.in' => 'Export format must be either csv or xml.',

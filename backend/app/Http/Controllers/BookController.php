@@ -87,7 +87,6 @@ class BookController extends Controller
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
-
     /**
      * NOTE: If there are other types of data to export,
      * consider separating it in an export dedicated controller 
