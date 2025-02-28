@@ -1,0 +1,128 @@
+name: Build and Deploy to GCP
+
+on:
+  push:
+    branches: [ ops/cloud-config ]
+  workflow_dispatch:
+
+env:
+  FRONTEND_IMAGE: ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ARTIFACT_REPO }}/frontend:${{ github.sha }}
+  BACKEND_IMAGE: ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ARTIFACT_REPO }}/backend:${{ github.sha }}
+
+jobs:
+  deploy-backend:
+    name: Deploy Backend
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+        
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+      
+    - name: Configure Docker for Artifact Registry
+      run: |
+        gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev --quiet
+        
+    - name: Build Backend Docker image
+      working-directory: ./backend
+      run: |
+        # Create storage directories and set permissions before building
+        mkdir -p storage/framework/{sessions,views,cache}
+        chmod -R 777 storage bootstrap/cache
+        
+        docker build -f Dockerfile.prod -t ${{ env.BACKEND_IMAGE }} .
+        
+    - name: Push Backend image to Artifact Registry
+      run: docker push ${{ env.BACKEND_IMAGE }}
+      
+    - name: Deploy Backend to Cloud Run
+      id: deploy-backend
+      uses: google-github-actions/deploy-cloudrun@v2
+      with:
+        service: backend-service
+        image: ${{ env.BACKEND_IMAGE }}
+        region: ${{ secrets.GCP_REGION }}
+        flags: |
+          --allow-unauthenticated
+          --memory=512Mi
+          --cpu=1
+          --min-instances=0
+          --max-instances=10
+          --port=8080
+          --set-cloudsql-instances=${{ secrets.GCP_PROJECT_ID }}:${{ secrets.GCP_REGION }}:${{ secrets.DB_INSTANCE }}
+          --vpc-connector=${{ secrets.VPC_CONNECTOR }}
+        env_vars: |
+          APP_ENV=production
+          APP_DEBUG=true
+          DB_CONNECTION=${{ secrets.DB_CONNECTION }}
+          DB_HOST=/cloudsql/${{ secrets.GCP_PROJECT_ID }}:${{ secrets.GCP_REGION }}:${{ secrets.DB_INSTANCE }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_DATABASE=${{ secrets.DB_DATABASE }}
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_SOCKET=/cloudsql/${{ secrets.GCP_PROJECT_ID }}:${{ secrets.GCP_REGION }}:${{ secrets.DB_INSTANCE }}
+          APP_KEY=${{ secrets.APP_KEY }}
+          CORS_ALLOWED_ORIGINS=*
+          LOG_LEVEL=debug
+          LOG_CHANNEL=stderr
+          APP_URL=https://backend-service-${{ secrets.GCP_PROJECT_ID }}.${{ secrets.GCP_REGION }}.run.app
+          SANCTUM_STATEFUL_DOMAINS=*
+
+    outputs:
+      backend_url: ${{ steps.deploy-backend.outputs.url }}
+
+  deploy-frontend:
+    name: Deploy Frontend
+    needs: deploy-backend
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+        
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+      
+    - name: Configure Docker for Artifact Registry
+      run: |
+        gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev --quiet
+        
+    - name: Build Frontend Docker image
+      working-directory: ./frontend
+      run: |
+        docker build -f Dockerfile.prod \
+          --build-arg VITE_BACKEND_URL=${{ needs.deploy-backend.outputs.backend_url }} \
+          -t ${{ env.FRONTEND_IMAGE }} .
+          
+    - name: Push Frontend image to Artifact Registry
+      run: docker push ${{ env.FRONTEND_IMAGE }}
+      
+    - name: Deploy Frontend to Cloud Run
+      id: deploy-frontend
+      uses: google-github-actions/deploy-cloudrun@v2
+      with:
+        service: frontend-service
+        image: ${{ env.FRONTEND_IMAGE }}
+        region: ${{ secrets.GCP_REGION }}
+        flags: |
+          --allow-unauthenticated
+          --port=3000
+          --memory=512Mi
+          --cpu=1
+          --min-instances=0
+          --max-instances=10
+
+    outputs:
+      frontend_url: ${{ steps.deploy-frontend.outputs.url }}
