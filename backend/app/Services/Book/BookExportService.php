@@ -6,7 +6,8 @@ use App\DataTransferObjects\Book\BookExportOptions;
 use App\Repositories\BookRepositoryInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Support\Collection;
-
+use InvalidArgumentException;
+use SimpleXMLElement;
 
 /**
  * NOTE: Consider using strategy pattern if there are more formats to export: 
@@ -32,7 +33,7 @@ class BookExportService implements BookExportServiceInterface
      *
      * @param BookExportOptions $options
      * @return StreamedResponse
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function exportBooks(BookExportOptions $options): StreamedResponse
     {
@@ -49,7 +50,7 @@ class BookExportService implements BookExportServiceInterface
         $content = match ($options->format) {
             'csv' => $this->generateCsv($books, $fields),
             'xml' => $this->generateXml($books, $fields),
-            default => throw new \InvalidArgumentException("Unsupported format: {$options->format}")
+            default => throw new InvalidArgumentException("Unsupported format: {$options->format}")
         };
 
         return $this->createDownloadResponse($content, $options->format);
@@ -93,7 +94,7 @@ class BookExportService implements BookExportServiceInterface
      */
     private function generateXml($books, array $fields): string
     {
-        $xml = new \SimpleXMLElement('<books></books>');
+        $xml = new SimpleXMLElement('<books></books>');
 
         foreach ($books as $book) {
             $xmlBook = $xml->addChild('book');

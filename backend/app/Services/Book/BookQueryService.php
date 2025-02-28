@@ -18,6 +18,9 @@ class BookQueryService implements BookQueryServiceInterface
     
     /**
      * Get paginated books with optional filtering and sorting
+     * 
+     * @param BookQueryOptions $options
+     * @return LengthAwarePaginator
      */
     public function getAllBooks(BookQueryOptions $options): LengthAwarePaginator
     {
@@ -26,6 +29,9 @@ class BookQueryService implements BookQueryServiceInterface
     
     /**
      * Get a book by ID
+     * 
+     * @param int $id
+     * @return Book|null
      */
     public function getBookById(int $id): ?Book
     {
