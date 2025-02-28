@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\DataTransferObjects\Book\BookExportOptions;
 use App\DataTransferObjects\Book\BookQueryOptions;
-use App\Http\Requests\BookExportRequest;
-use App\Http\Requests\BookIndexRequest;
-use App\Http\Requests\BookStoreRequest;
-use App\Http\Requests\BookUpdateRequest;
+use App\Http\Requests\Book\BookExportRequest;
+use App\Http\Requests\Book\BookIndexRequest;
+use App\Http\Requests\Book\BookStoreRequest;
+use App\Http\Requests\Book\BookUpdateRequest;
 use App\Http\Resources\BookCollection;
 use App\Http\Resources\BookResource;
 use App\Services\Book\BookMutationServiceInterface;
