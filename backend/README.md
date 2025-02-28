@@ -7,60 +7,192 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+# Assignment API - Backend Documentation
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Project Overview
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+This is the backend component of Assignment application, built with Laravel 10. It provides a RESTful API for managing books with features for creating, reading, updating, deleting, and exporting books data in csv and xml formats.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Architecture
 
-## Learning Laravel
+The backend follows a repository and service layer architecture approach with clear separation of concerns:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. **Controllers**: Handle HTTP requests and responses
+2. **Services**: Contain business logic, divided into:
+   - Query Services: For data retrieval
+   - Mutation Services: For data modification
+   - Export Services: For data export functionality
+3. **Repositories**: Manage data access and database operations
+4. **Data Transfer Objects (DTOs)**: Transfer data between layers
+5. **Models**: Represent database entities
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Key Design Principles
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Separation of Concerns**: Each layer has a single responsibility
+- **Service Layer**: For business logic
+- **Repository Pattern**: For data access and database operations
+- **Interface-based Programming**: Components depend on interfaces, for better code reliability
+- **Type Safety**: Strong typing with PHP 8 features for better code reliability
+- **Documentation**: DocBlocks with parameter and return types
 
-## Laravel Sponsors
+## Project Structure
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```
+app/
+├── DataTransferObjects/
+│   └── .../
+│       └── DTO.php
+├── Http/
+│   ├── Controllers/
+│   │   └── Controller.php
+│   ├── Requests/
+│   │   └── .../
+│   └── Resources/
+│   │   └── .../ 
+│   │       └── Resource.php  
+├── Models/
+│   └── Model.php
+├── Providers/
+│   └── AppServiceProvider.php
+├── Repositories/
+│   ├── Repository.php
+│   └── RepositoryInterface.php
+└── Services/
+    └── .../
+        ├── Service.php
+        └── ServiceInterface.php
+tests/
+├── Feature/
+│   └── .../
+│       ├── FeatureTest.php
+│       ├── MutationTest.php
+│       └── QueryTest.php
+└── Unit/
+    └── Services/
+        └── ServiceTest.php
+database/
+├── factories/
+│   └── Factory.php
+├── migrations/
+│   └── Migration.php
+└── seeders/
+    └── Seeder.php
 
-### Premium Partners
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## Coding Guidelines
+
+
+### 1. Documentation and Type Safety
+
+Document all methods with DocBlocks including parameter and type hints:
+
+```php
+/**
+ * Update an existing book
+ * 
+ * @param int $id
+ * @param array<string, mixed> $data
+ * @return Book|null
+ */
+public function updateBook(int $id, array $data): ?Book
+```
+
+### 2. Data Transfer Objects
+
+Use DTOs for transferring data between layers:
+
+```php
+// Creating a DTO from request data
+$options = BookQueryOptions::fromArray($request->validated());
+
+// Using the DTO in a service
+$books = $this->bookQueryService->getAllBooks($options);
+```
+
+It helps maintain type safety and readability of the code.
+
+### 3. Service Layer Pattern
+
+Note: If business logic becomes more complex consider moving to a granular service layer. (e.g. GetBookByIdService, CreateBookService, etc.)
+
+- **Query Services**: Handle data retrieval operations
+- **Mutation Services**: Handle data modification operations
+- **Export Services**: Handle data export operations
+
+### 4. Repository Pattern
+
+A repository must represent only one model and do not contain business logic.
+
+Repositories abstract data access logic:
+
+```php
+// In a service
+public function getBookById(int $id): ?Book
+{
+    return $this->bookRepository->findById($id);
+}
+
+// In a repository
+public function findById(int $id): ?Book
+{
+    return Book::find($id);
+}
+```
+
+## Testing
+
+Testing approach:
+
+- **Unit Tests**: Test individual components in isolation
+- **Feature Tests**: Test API endpoints
+
+Tests should be organized by domain:
+
+```
+tests/
+├── Feature/
+│   └── Book/
+│       └── BookQueryTest.php
+│       └── BookMutationTest.php
+│       └── BookExportTest.php
+└── Unit/
+    ├── Services/
+    │   └── Book/
+    │       ├── BookExportServiceTest.php
+    │       ├── BookMutationServiceTest.php
+    └──     └── BookQueryServiceTest.php
+
+```
+
+## Local Development Setup
+ 
+Docker:
+
+1. Navigate to the backend directory: `cd backend`
+2. Copy `.env.example` to `.env`
+3. Run `docker compose up -build -d` 
+4. Run `docker-compose exec backend php artisan migrate`
+5. Run `docker-compose exec backend php artisan db:seed`
+
+Without Docker:
+
+1. Navigate to the backend directory: `cd backend`
+2. Install dependencies: `composer install`
+3. Copy `.env.example` to `.env`
+4. Configure your database settings in the `.env` file
+5. Run `php artisan key:generate` to create a unique application key
+6. Run migrations: `php artisan migrate`
+7. Seed the database: `php artisan db:seed`
+8. Start the development server: `php artisan serve`
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+When contributing to the backend, please follow these guidelines:
 
-## Code of Conduct
+1. Create a feature branch from `develop`
+2. Follow the coding standards described above
+3. Write tests for your changes
+4. Update documentation as needed
+5. Submit a pull request
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
