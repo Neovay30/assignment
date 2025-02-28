@@ -11,7 +11,7 @@
 
 ## Project Overview
 
-This is the backend component of Assignment application, built with Laravel 10. It provides a RESTful API for managing books with features for creating, reading, updating, deleting, and exporting books data in csv and xml formats.
+This is the backend part of Assignment application, built with Laravel 10. It provides a RESTful API for managing books with features for creating, reading, updating, deleting, and exporting books data in csv and xml formats.
 
 ## Architecture
 
