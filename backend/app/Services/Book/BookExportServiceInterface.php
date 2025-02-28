@@ -8,7 +8,10 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 interface BookExportServiceInterface
 {
     /**
-     * Export books
+     * Export books based on the provided options.
+     *
+     * @param BookExportOptions $options
+     * @return StreamedResponse
      */
     public function exportBooks(BookExportOptions $options): StreamedResponse;
 }
