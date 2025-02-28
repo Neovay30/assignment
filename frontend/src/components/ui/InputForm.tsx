@@ -14,7 +14,7 @@ interface InputFormProps {
 }
 
 export const InputForm = forwardRef<HTMLInputElement, InputFormProps>(
-  ({ name, label, type = "text", placeholder, disabled = false, className = "", validation, error }, ref) => {
+  ({ name, label, type = "text", placeholder, disabled = false, className = "", validation, error }, _ref) => {
     const { register } = useFormContext();
     const uniqueId = useId();
     const inputId = `${name}-${uniqueId}`;
