@@ -3,7 +3,7 @@ import { ExportOptions } from '../../types/export';
 import axiosInstance from './axios';
 
 interface PaginatedResponse<T> {
-  data: T[];
+  books: T[];
   meta: {
     current_page: number;
     from: number;

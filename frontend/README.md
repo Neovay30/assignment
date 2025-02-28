@@ -1,50 +1,60 @@
-# React + TypeScript + Vite
+# Book Management Font End
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React TypeScript front end for managing a library of books with features like sorting, filtering and export capabilities.
 
-Currently, two official plugins are available:
+## 📚 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Book Management**
+  - View all books with server side searching, sorting and pagination
+  - Add new books
+  - Edit existing books author
+  - Delete books with confirmation
+  - Export books in CSV or XML formats
 
-## Expanding the ESLint configuration
+## 🔧 Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **[React](https://react.dev/)** -
+- **[TypeScript](https://www.typescriptlang.org/docs/)** -
+- **[Vite](https://vitejs.dev/guide/)** -
+- **[TanStack Table](https://tanstack.com/table/latest/docs/introduction)** -
+- **[React Hook Form](https://react-hook-form.com/get-started)** -
+- **[React Hot Toast](https://react-hot-toast.com/docs)** -
+- **[React Icons](https://react-icons.github.io/react-icons/)** -
+- **[Axios](https://axios-http.com/docs/intro)** -
+- **[TailwindCSS](https://tailwindcss.com/docs)** -
 
-- Configure the top-level `parserOptions` property like this:
+## 📁 Project Structure
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+The project follows a feature-based architecture for better organization:
+
+```
+src/
+├── components/         # Shared UI components
+│   └── ui/             # Base UI components (Button, Modal, etc.)
+├── hooks/              # Custom React hooks
+├── services/           # API services
+│   └── api/            # API clients and endpoints
+├── types/              # TypeScript type definitions
+├── utils/              # Utility functions
+└── views/              # Feature modules
+    └── book/           # Book management feature
+        ├── components/ # Book-specific components
+        ├── hooks/      # Book-specific hooks
+        └── constants/  # Book-related constants
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Local Development Setup
+ 
+Docker:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+1. Navigate to the frontend directory: `cd frontend`
+2. Copy `.env.example` to `.env`
+3. Run `docker compose up -build -d` 
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+Without Docker:
+
+1. Navigate to the frontend directory: `cd frontend`
+2. Install dependencies: `npm install`
+3. Copy `.env.example` to `.env`
+4. Configure your backend URL in the `.env` file
+5. Start the development server: `npm run dev`
