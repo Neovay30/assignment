@@ -66,4 +66,23 @@ class BookMutationServiceTest extends TestCase
         
         $this->assertNull($result);
     }
+
+    public function test_can_delete_book(): void
+    {
+        $book = Book::factory()->create();
+        
+        $result = $this->bookMutationService->deleteBook($book->id);
+        
+        $this->assertTrue($result);
+        $this->assertDatabaseMissing('books', [
+            'id' => $book->id,
+        ]);
+    }
+
+    public function test_delete_book_returns_false_for_nonexistent_book(): void
+    {
+        $result = $this->bookMutationService->deleteBook(999);
+        
+        $this->assertFalse($result);
+    }
 }

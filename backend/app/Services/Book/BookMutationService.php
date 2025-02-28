@@ -35,4 +35,18 @@ class BookMutationService implements BookMutationServiceInterface
         
         return $this->bookRepository->update($book, $data);
     }
+
+    /**
+     * Delete a book
+     */
+    public function deleteBook(int $id): bool
+    {
+        $book = $this->bookRepository->findById($id);
+        
+        if (!$book) {
+            return false;
+        }
+        
+        return $this->bookRepository->delete($book);
+    }
 }
