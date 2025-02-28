@@ -10,6 +10,12 @@ class BookExportOptions
         public readonly bool $includeAuthor
     ) {}
     
+    /**
+     * Create a new BookExportOptions instance from an array.
+     *
+     * @param array<string, mixed> $data
+     * @return self
+     */
     public static function fromArray(array $data): self
     {
         return new self(
