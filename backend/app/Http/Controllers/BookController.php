@@ -68,5 +68,17 @@ class BookController extends Controller
         return response()->json(new BookResource($book));
     }
 
-
+    /**
+     * Remove the specified book.
+     */
+    public function destroy(int $id): JsonResponse
+    {
+        $deleted = $this->bookMutationService->deleteBook($id);
+        
+        if (!$deleted) {
+            return response()->json(['message' => 'Book not found'], Response::HTTP_NOT_FOUND);
+        }
+        
+        return response()->json(null, Response::HTTP_NO_CONTENT);
+    }
 } 

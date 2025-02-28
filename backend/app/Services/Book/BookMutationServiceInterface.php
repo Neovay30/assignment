@@ -15,4 +15,9 @@ interface BookMutationServiceInterface
      * Update the specified book.
      */
     public function updateBook(int $id, array $data): ?Book;
+
+    /**
+     * Delete a book
+     */
+    public function deleteBook(int $id): bool;
 }

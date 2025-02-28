@@ -134,4 +134,26 @@ class BookMutationTest extends TestCase
             'author' => 'Updated Author',
         ]);
     }
+
+    public function test_can_delete_book(): void
+    {
+        $book = Book::factory()->create();
+
+        $response = $this->deleteJson("/api/book/{$book->id}");
+
+        $response->assertStatus(204);
+        $this->assertDatabaseMissing('books', [
+            'id' => $book->id,
+        ]);
+    }
+
+    public function test_cannot_delete_nonexistent_book(): void
+    {
+        $response = $this->deleteJson("/api/book/999");
+
+        $response->assertStatus(404)
+            ->assertJson([
+                'message' => 'Book not found'
+            ]);
+    }
 }
